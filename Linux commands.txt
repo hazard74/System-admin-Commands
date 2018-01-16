@@ -1,12 +1,14 @@
+
+FIND SIZE
 du -h --max-depth=4 | sort -hr > 4depth.txt   //To find the directory size
+find /size +1G -exec ls -l {} \;  //List file that have more than 1G
 
 TRANSFER FILE
 python -m SimpleHTTPServer // Up HTTPServer, if can't connect, turn off iptables
 
 FIREWALL
-iptables
-iptables -L
-service iptables stop
+iptables -L  // To list rules written in iptables
+service iptables stop  // Turn off the iptables
 
 MYSQL
 service mysqld|mysql status
