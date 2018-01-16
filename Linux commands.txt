@@ -1,7 +1,7 @@
 du -h --max-depth=4 | sort -hr > 4depth.txt   //To find the directory size
 
 TRANSFER FILE
-python -m SimpleHTTPServer
+python -m SimpleHTTPServer // Up HTTPServer, if can't connect, turn off iptables
 
 FIREWALL
 iptables
