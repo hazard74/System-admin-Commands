@@ -1,0 +1,871 @@
+MAN Page
+man ifconfig	// User manual about ifconfig
+man 8 ifconfig	// User manual section 1 of ifconfig. Have 1-8 sections. System admin use section 8
+man -k password | grep 8// To find manual that related to password
+mandb <- To update manual database
+
+Shift+G <- Will go to the end of manual
+
+==================================
+VIM
+i|I - insert mode current cursor | insert mode at the first line
+a - Append
+o - To open new Line
+G - to go to the last line
+
+dd - Delete line
+yy - Copy line
+p - Paste the dd or yy
+v - highlight
+ -d - same like dd
+ -y - same like yy
+ -p - same like p
+
+u - undo
+ctrl+u - big undo
+
+:%s/old_word/new_word/g  -- Replace the old word with new word
+/wordtosearch	- Search word, press 'n' for next search
+
+if VIM force delete
+1. Recover
+2. Quit save
+3. Open back and delete
+
+MOUNT
+Fat32
+mount -t vfat /dev/sdb1 /media/USB
+umount /media/USB
+NTFS
+yum install ntfs-3g		-- For read/write
+mount -t ntfs-3g /dev/sdb1 /media/USB
+
+BASH
+history - See previous command  . To reuse the previous command use !number. It save 1 thousand commands
+ctrl+r - insert the command you want to search. To search next command press ctrl+r again
+
+GLOBBING
+man 7 glob  -  Complete overview of globbing
+ls host* - List all every host name
+ls ?ost - ? show any char at first but same 3 char after
+ls [hm]ost - show file that start with h and m but end with ost
+ls [!hm]ost - show file that not start with h and m, but wend with ost
+ls [0-9][0-9]script - List all the file that start with number from 0-9 and second char from 0-9 
+ls -d  - Will list all the folder and -f will list all the files
+
+==================================
+
+I/O REDIRECTION
+> - Overwrite (Standard output)
+>> - Append
+2> - Output the standard error
+&> - Output both standard output and standard error
+2>&1 - Convert standard error into standard output
+ls | grep a  - 'ls' is our stdin, output of 'ls' is stdout. The 'ls' stdout will be stdin for 'grep a' and output of 'grep a' will be last stdout
+For example to use is to remove error we don't want to see, such as permission
+example: grep hello /proc/* 2> /dev/null   - This will only show the success output. and redirect error output to /dev/null
+
+==============================
+USERADD
+useradd USER	- Will create home directory and /var/spool/mail/ directory
+passwd USER		- Create a password for USER
+userdel -r USER - Delete user,home dir & mail
+
+=======================================
+HIERARCHY DIRECTORY
+man hier
+
+FILE MANAGEMENT
+\ls   - list the file without color
+ls -l  - show file with long list and see location of symlink
+ls -a  - show hidden file
+ls -lrt - show file sort by time creation
+ls -il - to show the inode number
+cp /etc/fstab .  - Will copy fstab to pwd.
+mkdir - create folder
+mkdir -p /this/is/folder/path  - will create folder with path
+
+rm - remove file
+rm -r  - delte file in recursive folder
+
+CALCULATE/DETERMINE BLOCK SIZE
+MB * 1024 = Block size
+example: 64MB * 1024 = 65536 block size
+FIND
+find / size +100M  - Search file that have size large than 100Mbyte
+find / size +100M -exec ls -l {} \;  - -exec is to run bash commands such as 'ls -l' follow by {} and lastly \;
+find / -user anna  - It will show the list of file that owner by anna
+
+Find SUID/SGID
+find / -perm +4000 (SUID)
+find / -perm +2000 (SGID)
+find / -type -f \\(-perm -4000 -o -perm -2000\\) -exec ls -l {} \\; //FInd both SUID and SGID
+
+Creating hardlink
+ln source-file destination-file
+Creating softlink
+ln -s source-file destination-file
+
+TAR FILES
+tar cvf filename.tar /location/ <
+- create tar name filename.tar and insert file from documents 
+tar tvf - list file inside tar, verbose, file name
+tar xvf - extract, verbose, file name
+tar czvf filename.tgz /filename.tar - Will compress the .tar file
+tar xzvf filename.tgz
+bzip2 filename - Create bzip2 file
+bzip2 -d filename.bz2 -Extract bzip2 file
+tar xvjf filename.tar.bz2
+
+==================================
+TEXT TOOLS
+cat - Display text file
+tac - Display text in decesding way
+cut -d : -f 1 /etc/passwd - print out column 1 that seperate by : in /etc/passwd
+sort - sort in aplhabetical error. -n for numeric sort
+head - show firt 10 first line. head -1 show 1 line
+tail - show first 10 last line. Always use for log
+tail -f - real time update
+tail -n 1 <- Show last line
+more /var/log/message - same like less
+less /var/log/message - same like more
+tr - convert case : cat users | tr [a-z] [A-Z]
+grep '^#' /etc/sysconfig/sshd - will should text that start with #
+grep -v '^#' /etc/sysconfig/sshd - will should text that comment the configuration
+awk -F : '/user/ { print $4 }' /etc/password - finding 'user' at column 4 in /etc/passwd
+sed -n 5p /etc/passwd - print line 5
+grep word -- * <- This will search all readable text in the directory to find the specific word
+grep -col -r 'ayat' <-
+
+OPENING LOCAL SHELL
+systemctl isolate multi-user.target - CLI SHell commend, alt+f2-f6 to open different shell
+systemctl isolate graphical.target - GUI 
+OR
+chvt 2 - will open vty terminal 1. 1 is GUI , 2-5 is CLI terminal
+OR
+right CTRL+F1 for GUI, CTRL+F2-F5 for cli terminal
+w - To know connected shell user
+Best practice is: tty1 for root and tty2 for user.
+
+SU
+SU - <- it will go to root home directory
+su <- Will go to the root current user directory
+su - user <- that to user at home directory
+
+SUDO Priviledge
+visudo <- Place to give sudo permission
+
+
+GROUP
+vi /etc/group - To add user into group
+wheel:x:10:USERHERE - Putting userhere into group wheel. To active must logout first.
+
+
+/etc/skel/ <-- If you want a new user have a new file create. just create the file in skel and new user will have that file created automaticly
+
+USER CONFIGURATION FILES
+
+/etc/default/useradd  
+/etc/login.def <- Higher priority then useradd
+/etc/skel/ <- directory for home new file
+/etc/passwd/ <- properties
+/etc/shadow <- Password management, and properties ralated too user password or read man 5 shadow
+/etc/group
+
+
+GROUP
+groupadd lol  <- Adding group lol
+vigr <- Edit /etc/group
+wheel:x:10u:user1,user2,user3 <- To add user into the group
+usermod -aG group1 user1  <- To append user1 into secondary group without remove other group
+
+Password
+passwd user1 <- create password for user1
+passwd -S user1 <- output like shadow
+echo password | passwd --stdin user1 <- Will create password. Basicly use in script
+
+CHAGE <- set the age for User
+chage user1
+
+CHANGE OWNER
+chown user1:group1 filename
+chown -R user1:group1 foldername
+chown  :group1 filename <- only change group name
+CHANGE GROUP
+chgrp group1 filename
+
+USER PERMISSION
+chmod 764 file1 <-rwx for user1, read,write for group1, read for other
+chmod u=rx,g-w,o+x file1
+chmod +x file1 <- Will give execute permission to all
+
+umask 022 <- To set permission for new file. 022 = rwx-r-r, it is because 0777 base mission for directory, 0666 base permission for files 666-022 = 7,4,4 = rwx-r-r
+
+SPECIAL PERMISSION (
+setuid: This permission allow any user to run this file with the privileges of the owner. (S,s)
+	Command: chmod u+s file1 // Capital S mean there are no execute permissions. -rwSrw-r--
+	Command: chmod u+x file1 // Small s means there are execute permissions. -rwsrw-r--
+	Command: chmod 4700 file1 // Number 4
+setgid: Same like setuid, but authority based on group owner permission have (s)
+	Command: chmod g+s file1
+	Command: chmod g+s folder1
+sticky Bit: This use to protect the file/folder from be delete from any user. Except owner or root (t)
+	Command: chmod a+t folder1
+
+MANAGEMENT ACL
+For file
+setfacl -m g|u|:Group_name|User_name:r|x|w file // -m Modify
+
+For Folder
+setfacl -R -m g|u:Group_name|User_name|o:r|x|w folder // -R Recursive -m Modify
+setfacl -m d:g|u:Group_name|User_name|o:r|x|w folder  // d: To set it as default
+
+getfacl file|folder name
+
+setfacl -m d:o::- folder_name|file_name <-- Other get no permission
+
+=====================================================================
+ENS33 to ETH0
+https://www.certdepot.net/rhel7-restore-old-network-interface-name/ 
+
+NETWORK MANAGEMENT
+ip addr <-- Runtime configuration
+ifconfig <-- Persisten configuration // Before persistence better test at runtime configuration
+
+ip route	
+ip route show
+ip route add default via 192.168.1.1
+ip route del default via 192.168.1.1
+
+ip addr add 10.0.0.10/24 dev eth0
+
+NETWORK MANAGER USING CLI
+nmcli connection add ifname eth0 type ethernet ip4 192.168.1.2/24 gw 192.168.1.1 <- Set ip addr
+nmcli connection up eth0 <- Interface up
+nmcli connection show <- Show interface
+
+Adding DNS
+nmcli connection modify <- Modify connection
+nmcli connection modify ethernet-eth0 ipv4.dns 8.8.8.8
+cat /etc/resolv.conf
+
+nmcli connection edit ethernet-eth0
+nmcli> set ipv4.gateway 192.168.1.1
+nmcli> save
+nmcli> quit
+nmcli connection up ethernet-eth0
+
+HOSTNAME
+hostname <tab>
+hostnamectl status 
+hostnamectl set-hostname newhostname
+vim /etc/hosts
+192.168.1.Your_PC_IP newhostname
+OR
+vim /etc/hostname // Centos 7
+
+
+dig < to resolve DNS name
+
+DNS
+vim /etc/resolv.conf
+
+
+BACKGROUND AND FOREGROUND PROCESS?
+When to use it?
+Consider the following command which creates ISO image of a DVD:
+
+$ dd if=/dev/sr0 of=/home/hope/exampleCD.iso bs-2048 conv=noerror, sync
+
+Now you press Ctrl+Z and the command is stopped. Use command bg to continue running it in background but you can use your shell.
+
+To bring the program to foregorund to interact with it (using keboard) use command fg.
+
+sleep 300 <- Can't user terminal 5 minutes
+Ctrl+Z <- Suspended the sleep
+jobs <- List the jobs
+bg <- Run the sleep 300 in background, bg %2 to run the second jobs
+
+fg <- Bring program to foreground
+fg %2 <- Pring process number 2 to foreground
+
+kill $1 <- Kill process 1
+
+disown %1 <Sometimes we cannot exit from terminal until it is completed. in those cases, if you want to run a process in background we can use this command.
+
+Process Information
+ps
+ps aux
+ps -ef ppid is a parent process
+ps fax <- Show like tree
+
+FIREWALL 
+firewall-cmd --list-all-zones <- To view configuration from all zones
+linode.com/docs/securit/firewalls/introduction-to-firewalld-on-centos/
+
+SSH
+BAD OWNER PERMISSION
+chmod 600 ~/.ssh/config or chmod 400 ~/.ssh/config
+chown $USER ~/.ssh/config or chown -R user1:group1 ~/.ssh
+ssh -i /path/file.pem user@domain
+
+HOSTNAME
+nmtui -> Set system hostname -> ok
+systemctl restart systemd-hostnamed
+hostnamectl status
+
+UPDATE CENTOS OS
+yum update -y
+yum install wget -y
+
+YUM REPO
+yum search programname
+yum provides */sepolicy <-Search in description
+yum install programname
+yum update
+yum update programname
+yum remove programname
+yum repolist <- Showing all repository, to test access to repository
+yum list <- Showing all package available including repository that are available from
+yum list | grep ntfs
+
+Making folder into Repo
+yumdownloader q* <- Download all RPM that start with q from centos repository, Yumdownloader is use to download RPM from centos repository
+createrepo <- Use this command inside the RPM folder to create repo
+
+Create Repofiles
+cd /etc/yum.repos.d/
+vim myrepo.repo
+	[myrepo]
+	name=my demo repository
+	baseurl=file:///repo
+	gpgcheck=0
+yum repolist
+
+yum install epel-release 	 =  excel package for enterprise linux <-repo that amazing lol
+
+yum groups list <-Install server environment
+yum groups list hidden
+OR
+yum groups info "nfs file server"
+
+yum history
+
+What is repository? content a repository that are not yet install 
+repoquery <-query package in repository
+What is RPM Database? after install 
+rpm -q <-Will go to query insta
+What is downloader RPM?
+rpm -qp filename <-p for package files
+
+rpm -qRp filename.rpm <- To show the dependencies it need
+rpm -ivh filename.rpm
+
+rpm -qa <- show all rpm in the database
+rpm -qa | grep bash-completion <- Can use to find version
+rpm -ql bash-completion <- Show the list of package list
+
+rpm -qf /etc/idmapd.connf <- to know where this file coming from
+
+rpm -qc filename <- To find the configuration file
+rpm -qd filename <- to find the documentation
+
+
+repoquery httpd
+repoquery -i httpd <- Show info
+repoquery -l httpd <- list of package
+
+yumdownloader httpd <-download rpm to local drive
+
+rpm -qp --scripts filename.rpm <- Show the script to be execute by the package, Only use before install
+---------------------------
+VIRTUALIZATION
+egrep 'vmx | svm' /proc/cpuinfo <- To see if it support virtualization
+
+Virtualization function in linux
+In linux kernal it using 2 modules
+1. kvm
+2. kvm-intel	// depending on the platform
+
+libvirtd <- use to manage the virtualization, it's a daemon
+
+virt-manager // To manage virtualization
+virsh // Shell to virtualization allow to access virtual machine
+virt-install  // use to install virtual machine
+
+Install virtualization needed
+yum group install "Virtualization Host"
+
+yum install virt-manager
+
+systemctl libvirtd status // To check the service of libvirtd
+
+checking for the vmx, for intel
+cat /proc/cpuinfo | grep vmx
+
+checking for the vmx, for AMD
+cat /proc/cpuinfo | grep svm
+
+virt-manager // TO open virtual machine manager
+
+CONVERT VMDK TO QCOW2
+qemu-img -O qcow2 /source/location/image.vmdk /save/location/image.qcow2
+
+CRONTAB
+systemctl status crond
+/etc/crontab <- To schedule, Basicly it not practical to use it, because if using RPM it may can replace the crontab
+better use
+/etc/cron.d/ for system
+/etc/cron.daily/ 
+
+* * * * * logger hello  <-- Test if cron job working, writing hello at /var/log/message
+
+vim /etc/anacrontab  <- To set time for daily,weekly,monthly, hourly
+------------
+AT // Only run at 1 time
+systemctl status atd
+at 20:00  // To start the job at 8pm
+ctrl+D  // To end the script
+atq  // To show current job
+atrm 1  // Remove job 1
+
+
+RSYSLOGD AND JOURNALD LOGGING
+journalctl // Detail about log, but sent some log to rsyslog
+rsyslog  // Log that user can refer, but it still sync with journalctl
+
+systemctl status rsyslog
+vim /etc/rsyslog.conf  // The configuration for rsyslog
+
+JOURNALD is log everything that happen in systemd and systemctl, it create every reboot
+journalctl <- To open journal
+journalctl -b <- SHow log when booting
+journalctl --since=yesterday  <- show log from yesterday
+journalctl -u=cron  <- specific log
+journalctl	<tab>
+
+make it persistence
+mkdir /var/log/journal
+systemctl restart systemd-journald
+
+Journald configuration files
+vim /etc/systemd/journald.conf
+
+-------
+
+LOGROTATE // Run as cronjob, monitor log size file trough cron.daily
+vim /etc/logrotate.conf  <- Configuration file
+
+cd /etc/logrotate.d/  <- More log rotate for specific program
+
+-----------------
+PARTITIONING
+
+MBR (fdisk) <- It store bootloader, partition table. Max paritions 15 included primary and extended partition. Max hdd to use is 2TB
+if want to use more than 2TB use GPT (GUID Partition table)
+GPT (gdisk) <- store bootloader, paritions table up to 128 partition. all primary. Can be create on 2nd hard drive
+/   <- Root directory
+/home <- User directory
+/var <- Log directory or server directory
+/boot <- Boot directory
+/swap <- Swap place
+
+extended partition <- Can't be use to create filesystem, pupose to create logical partition
+
+fdisk -l  <- to see the sda1
+Or 
+cat /proc/paritions <- To see the sda and sda1
+
+fdisk /dev/sda  <- To configure sda
+
+GDISK <- GUI PARTITIONING
+*Note: Don't use GDIK on MBR because it will destroy the file to check use, gdisk /dev/sda if MBR is present
+
+Error: Error 16: Device or resource busy
+partprobe /dev/sda <-sdb or anything the partition u are currently working on
+---------------------
+
+CREATE FILE SYSTEM	
+mkfs <tab2> *Note: Don't use mkfs only because will get 2 filesystem
+
+mkfs.xfs <-Create xfs filesystem
+mkfs.xfs --help <- Show help menu
+
+mkfs.xfs -L data /dev/sda3  <- Making sda3 filesystem xfs and label it as data
+
+mount <- TO make the file accessable
+
+mount /dev/sda3 /mnt <- mnt folder is register to sda3
+or
+mount LABEL=data /mnt <- It will file the filesystem with label data and mount it for /mnt.
+
+mount <- See at the last line if it successfull
+mount -a <- Mount all file system
+
+umount <- For unmount
+NOT TO DO WHEN UMOUNT: umount in the folder you want to unmount
+To fix: lsof /mnt <- Check the node for bash and lsof, it should be different.
+Umount Note: even if you umount the folder, the folder can be accessable and write, but it write somewhere else in the hdd, so if you mount back, you will not see the file that you write before you mount back.
+---------------------
+SWAP
+free -m <- show memory and swap
+
+Create swap paritions
+fdisk /dev/sda
+ create new partition
+ Partition type: 82 Linux swap
+mkswap /dev/sda6 <- Register filesystem as SWAP
+swapon /dev/sda6 <- Active the swap file
+
+FSTAB
+Make it persistent upon reboot:
+vim /etc/fstab
+  /dev/sda6		swap	swap	defaults	0 0
+  
+To find UUID: blkid
+UUID is same purpose like a label
+  
+To Test if it persistent:
+swapoff /dev/sda6 <- Remove the swap
+free -m  <- The swap size should be reduce
+swapon -a <- To active all swap filesystem
+free -m <- The swap size should be return to normal
+
+------------------------
+LOGICAL VOLUME MANAGER
+
+Extend
+lvextend -r <- If want to extend logical group use -r to syncronize between filesystem and logical volume
+1. Increase volume group (if volume group don't have anymore space)
+ vgextend vg_name /dev/sda10
+ lvextend -L +100M -r /dev/vgdata/lvdata <- -L +100M (Increase size 100M), -r resize FS also, location of logical volume
+ 
+
+Shrink
+lvreduce -r <- If want to shrink logical group use -r to syncronize between filesystem and logical volume. Not support for xfs.
+lvreduce -L -100M -r /dev/vgdata/lvext
+
+--------------------
+TIP AND TRICK
+TO FULL THE HDD
+dd if=/dev/zero of=/mnt/thisisbigfile bs=1M
+
+------------
+MANAGING THE KERNEL
+
+lsmod <- To see the module that available
+
+modprobe vfat <- To enable vfat module
+modprobe -r vfat <- To disable vfat module
+
+modinfo vfat <- Will show the info about vfat, We can change the value in the parm
+
+modprobe cdrom lockdoor=1 <- This will change cdroom parm lockdoor value to 1, every changes check "dmesg" to see if any error occurs
+
+to make the changes persistence
+cd /etc/modprobe.d/
+vim cdrom.conf
+	options cdrom lockdoor=1
+	
+TUNING KERNEL BEHAVIOR
+cd /proc/sys
+
+example:
+cd /proc/sys/net/ipv4/
+cat icmp_echo_ignore_all
+	0
+echo 1 > icmp_echo_ignore_all
+cat icmp_echo_ignore_all
+	1
+ping 127.0.0.1 <- Will get no reply
+
+OR
+
+sysctl -a <- Will list the parameter that can be change
+
+To make it persistence
+cd /etc/sysctl.d/ 
+vim 50-swap.conf <- 50 is the priority, the lowest the higest, swap is just a name
+	vm.swappiness=60 <-vm is the folder, swappiness is the filename, 60 is the values to put into the swappiness
+	
+TO UPDATE KERNAL
+yum update kernel <- Will install the new kernal, but previous kernel still have, that can be selected during boot process
+
+------------
+MANAGING BOOT
+Understanding Grub2
+/etc/default/grub <- Most important configuration file
+/etc/grub.d <- Additional configuration
+
+grub2-mkconfig -o /boot/grub2/grub.cfg <- To update the configuration
+
+vim /boot/grub.cfg <- Contain everything that happening during a boot
+
+press "e" at bootmenu to add boot parameter
+add parameter that start with "linux16"
+
+to enter emergency mood at boot
+add this comand: systemd.unit.=rescue.target <- More service on, such as firewall
+if fail try: systemd.unit=emergency.target <- Less service on
+-------------
+SERVICE
+Systemd <- is a service manager 
+/usr/lib/systemd/system <- Is the configuration for systemd
+if want to make changes, copy the file in system and paste at below
+/etc/systemd/system/ 
+
+systemctl --type=service <- To see the current system and status
+
+systemctl -t help <- Show the available unit type.
+
+systemctl enable vsftp <- Will run when boot 
+OR
+chkconfig vsftpd on
+
+systemctl start vsftpd
+systemctl restart vsftpd
+systemctl stop vsftpd
+systemctl status vsftpd
+OR
+systemctl status vsftpd -l
+
+systemctl list-dependencies vsftp <- Will show all dependencies that need to be run to start vsftp
+
+systemctl mask vsftp  <- Strong than disable , sound like remove it.
+systemctl unmask vsftp <- Will enable it back
+
+systemctl --failed <- Will list the service that failed
+
+
+TARGET
+cd /usr/lib/systemd/system
+ls *target
+vim multi-user.target
+
+To mount through systemd refer to: 17.8 Managing file system mounts in a systemd environment
+
+
+-------------
+TROUBLESHOOT
+
+Changing the Root Password
+boot menu and press 'e'
+end of linux16 put "rd.break" and ctrl+x <- Will go into ramfs
+mount -o remount.rw /sysroot <- Will give read write access to filesystem
+chroot /sysroot/ <- Will make actual root directory
+passwd new_password
+touch .autorelabel <- When selinux find this file when booting selinux will use the changes system
+ctrl+d
+ctrl+d
+
+File System Issues
+Enter emergency mood
+touch aa <- to test if in the rw mode
+vim /etc/fstab <- Fix here maybe typos
+exit
+
+Performance Issues (commands execute take time to show output)
+top
+see load average and %Cpu:
+see the process which use the highest Cpu
+Press "k" to kill
+
+RPM Dependencies
+use yum
+yum install nmap-frontend
+
+Memory Shortage (Out of memory)
+Error: Out of memory
+BUY MORE RAM !
+or Start emergency mode <- Use minimal memory,
+and add swap memory
+
+
+e at boot menu
+systemd.unit=emergency.target
+touch aa <- To check if read write enable if not use "mount -o remount.rw /"
+add swap
+systemctl start multi-user.target <- to enter cli mode
+
+
+======================
+APACHE
+etc/httpd/conf/httpd.conf <- main configuraation
+/etc/httpd/conf.d/ <- Configuration for additonal apache
+/etc/httpd/modules.conf.d/ <- Module specific configuration files
+/var/www/htdocs
+
+TO open web browser using terminal
+yum install elinks
+elinks http://localhost/info.php
+
+
+=================
+LDAP (Lightweight Directory Access Protocol) <- A directory server. OpenLDAP or FreeIPA (easy to setup), Active directory by mircsosoft alternative
+
+
+===============
+System Info
+
+cat /proc/cpuinfo
+cat /proc/meminfo
+cat /proc/paritions
+lsb_release -a <- Operating
+hostname
+uname -a
+
+systemctl --type=service
+
+Process
+ps aux
+
+Port
+netstat -tulpen
+
+HARDWARE
+lshw -class memory //To display slot ram
+========
+SELinux
+vim /etc/sysconfig/selinux
+
+STATE (To change different state need to reboot because it deep inside a kernel)
+1. enable
+	i. Enforceing <- Fully functional
+	ii. Permissive <- Not blocking anything but do log. Good for troubleshooting
+2. disable
+To change state do at
+	vim /etc/sysconfig/selinux
+	
+getenforce <- To see the SELinux current mode
+setenforce Permissive <- Will switch to Permissive mode.
+
+CONTEXT LABELS AND POLICY
+Enforceing  Mode
+Source			TARGET
+-Process		-File
+-Users			-Port
+
+Context Label <- Used as identifier, it written down in selinux policy
+
+ls -Z <- To show selinux label
+ls -Zd <- To know the current type directory will be set when new file come
+ps -Zaux
+(  -Z <- is use to show the user,group,type for selinux
+
+Restore Label
+restorecon -v /etc/hosts <- To restore the permission to original  )
+
+MAN
+man semanage-fcontext <- manual for fcontext
+or
+man -k _selinux <- To see all selinux configuration for different application
+sepolicy manpage -a <-To generate all man page for selinux
+
+
+USING BOOLEAN
+getsebool -a <- To see the set of functionality to allow use or not to use functionality 
+setsebool ftpd_anon_write on <- Will enable selinux policy to enable anon write using ftp
+semanage boolean -l <- Same like getsebool, but show current and persistent. (current , persistence)
+setsebool -P ftpd_anon_write on <- This boolean will be persistence after reboot
+
+Semanage Fcontext <- Is to use to modify the context label
+man semanage-fcontext <- To see the manual of semanage fcontext
+
+CONFIGURATION LABEL
+For file and dir
+semanage fcontext -a -t httpd_sys_content_t " /web(/.*)?" <- -a to add -t for type (/.*) <- Anything that will be created in the web directory and web directory itself
+restorecon -R -v /web <- To applied to SELinux policy. This command only applied to directory, and file because it have inode.
+
+For Port
+semanage port -a -t Port_Type -p tcp 8000
+
+LOG
+grep AVC /var/log/audit/audit.log <- AVC (Access Vector Cache)
+then check
+/var/log/message <- Look for setroubleshoot and sealert message
+
+TROUBLESHOOT
+if problem try disable selinux by using "setenforce Permissive"
+if OKAY then the problem is with SELinux
+
+==================
+Firewall
+
+firewall-cmd --list-all <- Will show description of public zones
+
+ls /usr/lib/firewalld/services <- List of system default services for firewalld, Don't edit here.
+OR
+firewall-cmd --get-services
+
+firewall-cmd --list-services <- TO show services that been used
+
+ADD NEW SERVICES
+cp /usr/lib/firewalld/services/ssh.xml /etc/firewalld/services/
+mv ssh.xml newservices.xml
+vim newservices.xml <- Edit name, description, & port
+firewall-cmd --reload
+firewall-cmd --get-services | grep newservices
+
+
+FIREWALL-CONFIG (GUI FIREWALL)
+firewall-config <- The configuration will go to /etc/firewalld/services/
+
+=================
+KICKSTART (For auto install OS and software in new PC)
+
+yum install system-config-kickstart
+
+Disadvantage of using it is, no configuraation for LVM, if want LVM, copy the system that been install using LVM partitions and copy the LVM script.
+
+For network: Specify the location of kickstart
+for ISO: at installation menu press tab at "Install Centos" and then add ks=ftp://myserver.com/kickstart.cfg
+
+=============
+TIME
+date <- 
+hwclock <- hARDWARE CLOCK
+
+timedatectl
+timedatectl status
+
+timedatectl list-timezones <- List all timezones
+timedatectl set-timezone Asia/Kuala_Lumpur <- Set time zones
+
+NTP
+systemctl status chronyd <- Service for NTP
+
+vim /etc/chrony.conf <- Conf for chrony
+
+HWCLOCK
+hwclock --systohc Sync system time and hardware time
+
+==================
+SSH
+
+systemctl status sshd <- Check status
+
+cd /etc/ssh/ <- Main folder
+cd /etc/ssh/sshd_config <- Server configuration
+	Port 22 <- Better change to any number, because if on internet hacker will bruteforce port
+	AllowUsers ROBIN <- Only ROBIN can use to login using ssh
+cd /etc/ssh/ssh_config <- Client configuration
+
+Enable Firewall
+firewall-cmd --add-service ssh --permanent; firewall-cmd --reload
+
+
+=================
+SCP
+scp fileyouwanttotransfer.txt root@192.168.2.70:targethostfile.txt <- Will transfer file to remote location. if not included path for remote it will go at remote home: /home/username/.
+
+scp thisisfolder/* root@192.168.2.70:newfolder/ <- Will transfer all file inside thisisfolder/ into newfolder/
+
+======================
+AWS - EC2
+
+ssh
+ssh -i /path/my-key-pair.pem user@remote_ip_address
+
+scp
+scp -i /path/my-key-pair.pem /this_is_myfile.txt user@remote_ip_address:~ <- From home to AWS
+scp -i /path/my-key-pair.pem user@remote_ip_address:~/this_is_remote_file.txt ~/this_is_myfile.txt <- From AWS to home
